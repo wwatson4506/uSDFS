@@ -1,5 +1,6 @@
 
 //#include <time.h>
+#include "core_pins.h"
 
 #if defined(__IMXRT1052__) || (__IMXRT1062__)
     #include "imxrt.h"

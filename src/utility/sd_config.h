@@ -25,14 +25,19 @@
  
 #ifndef _SD_CONIG_H
 #define _SD_CONIG_H
-
 #include "ff.h"
 
 /* Definitions of physical drive number for each drive */
-#define DEV_SPI   0 /* Example: Map SPI card to physical drive 0 */
-#define DEV_SDHC  1 /* Example: Map SDHC card to physical drive 1 */
-#define DEV_MSC   2 /* Example: Map MSC card (USB disk) to physical drive 2 */
-#define DEV_USB   2 /* Example: Map MSC card (USB disk) to physical drive 2 */
+#define DEV_SPI    0 /* Example: Map SPI card to physical drive 0 */
+#define DEV_SDHC   1 /* Example: Map SDHC card to physical drive 1 */
+#define DEV_MSC    2 /* Example: Map MSC card (USB disk) to physical drive 2 */
+#define DEV_USB    2 /* Example: Map MSC card (USB disk) to physical drive 2 */
+#define DEV_MSC1   3 /* Example: Map MSC card (USB disk) to physical drive 3 */
+#define DEV_USB1   3 /* Example: Map MSC card (USB disk) to physical drive 3 */
+#define DEV_MSC2   4 /* Example: Map MSC card (USB disk) to physical drive 4 */
+#define DEV_USB2   4 /* Example: Map MSC card (USB disk) to physical drive 4 */
+#define DEV_MSC3   5 /* Example: Map MSC card (USB disk) to physical drive 5 */
+#define DEV_USB3   5 /* Example: Map MSC card (USB disk) to physical drive 5 */
 
 // SPI 
 #define CS_PIN 10

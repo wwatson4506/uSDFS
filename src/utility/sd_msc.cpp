@@ -42,19 +42,32 @@
 	#include "MassStorage.h"
 
 // needs msc from  https://github.com/wwatson4506/MSC	
+#ifndef USE_EXTENAL_INIT
 	USBHost myusb;
-
+	USBHub hub1(myusb);
+	USBHub hub2(myusb);
+	USBHub hub3(myusb);
+	USBHub hub4(myusb);
+#endif
 	int MSC_disk_status() 
 	{	
 		int stat = 0;
-		if(!deviceAvailable()) stat = STA_NODISK; 	// No USB Mass Storage Device Connected
-		if(!deviceInitialized()) stat = STA_NOINIT; // USB Mass Storage Device Un-Initialized
+
+		if(!checkDeviceConnected(getDrive())) stat = STA_NODISK; 	// No USB Mass Storage Device Connected
+		// Note: if connected and is not initialized it will be auto initialized.
+
+//		if(!deviceAvailable(getDrive())) stat = STA_NODISK; 	// No USB Mass Storage Device Connected
+//		if(!deviceInitialized(getDrive())) stat = STA_NOINIT; // USB Mass Storage Device Un-Initialized
 		return stat;
 	}
 
 	int MSC_disk_initialize() 
-	{	myusb.begin();
+	{	
+#ifndef USE_EXTENAL_INIT
+		myusb.begin();
 		return mscInit();
+#endif
+		return 0;
 	}
 
 	int MSC_disk_read(BYTE *buff, DWORD sector, UINT count) 

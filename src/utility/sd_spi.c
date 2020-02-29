@@ -225,6 +225,7 @@ uint16_t sd_init(uint16_t cs_pin)
 
   sd_setChipSelect(cs_pin);
   sd_chipSelect(HIGH);
+
   // must supply min of 74 clock cycles with CS high.
   for (ii = 0; ii < 10; ii++) spi_send(0XFF);
 
