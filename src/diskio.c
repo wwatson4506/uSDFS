@@ -13,6 +13,7 @@
 #include "utility/sd_spi.h"
 #include "utility/sd_sdhc.h"
 #include "utility/sd_msc.h"
+
 void logVar(char *s,unsigned int v);
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
@@ -31,6 +32,11 @@ DSTATUS disk_status (
 		return SDHC_disk_status();
 
 	case DEV_MSC :
+		setDrive(MSD1);
+		return MSC_disk_status();
+
+	case DEV_MSC1 :
+		setDrive(MSD2);
 		return MSC_disk_status();
 	}
 	return STA_NOINIT;
@@ -67,9 +73,18 @@ DSTATUS disk_initialize (
 		return stat;
 
 	case DEV_MSC :
+		setDrive(MSD1);
+		result = MSC_disk_initialize();
+		// translate the reslut code here
+		if(result==RES_OK) stat=0; else stat=STA_NODISK;
+
+		return stat;
+
+	case DEV_MSC1 :
+		setDrive(MSD2);
 		result = MSC_disk_initialize();
 
-		// translate the reslut code here
+		// translate the result code here
 		if(result==RES_OK) stat=0; else stat=STA_NODISK;
 
 		return stat;
@@ -112,13 +127,21 @@ DRESULT disk_read (
 
 	case DEV_MSC :
 		// translate the arguments here
-
+		setDrive(MSD1);
 		result = MSC_disk_read(buff, sector, count);
 		// translate the reslut code here
 		if(result==0) res=RES_OK; else res=RES_READERROR;
 
 		return res;
 
+	case DEV_MSC1 :
+		// translate the arguments here
+		setDrive(MSD2);
+		result = MSC_disk_read(buff, sector, count);
+		// translate the reslut code here
+		if(result==0) res=RES_OK; else res=RES_READERROR;
+
+		return res;
 	}
 
 	return RES_PARERR;
@@ -163,7 +186,16 @@ DRESULT disk_write (
 
 	case DEV_MSC :
 		// translate the arguments here
+		setDrive(MSD1);
+		result = MSC_disk_write(buff, sector, count);
+		// translate the reslut code here
+		if(result==0) res=RES_OK; else res=RES_WRITEERROR;
 
+		return res;
+
+	case DEV_MSC1 :
+		// translate the arguments here
+		setDrive(MSD2);
 		result = MSC_disk_write(buff, sector, count);
 		// translate the reslut code here
 		if(result==0) res=RES_OK; else res=RES_WRITEERROR;
@@ -205,9 +237,13 @@ DRESULT disk_ioctl (
 //		return res;
 
 	case DEV_MSC :
+		setDrive(MSD1);
 		return SDHC_disk_ioctl(cmd,buff);
+//		return res;
 
-		// Process of the command for the SDHC device
+	case DEV_MSC1 :
+		setDrive(MSD1);
+		return SDHC_disk_ioctl(cmd,buff);
 
 //		return res;
 

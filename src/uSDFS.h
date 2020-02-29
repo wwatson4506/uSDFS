@@ -17,11 +17,14 @@
 	#endif
 #endif
 
+
 extern const char *STAT_ERROR_STRING[] ;
 extern const char *FR_ERROR_STRING[] ;
 extern const char *fileSystem[] ;
 
-
+// Uncomment if not using time.h anywhere else.
+// "redefinition of 'struct tm'" error to be exact.
+/*
 #ifndef HAVETM
 #define HAVETM
 	typedef struct tm
@@ -36,5 +39,5 @@ extern const char *fileSystem[] ;
 	  int tm_isdst;
 	} tm_t;
 #endif
-
+*/
 #endif

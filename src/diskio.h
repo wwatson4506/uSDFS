@@ -46,6 +46,15 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff);
 #define STA_NODISK		0x02	/* No medium in the drive */
 #define STA_PROTECT		0x04	/* Write protected */
 
+/*----------------------------------------*/
+/*           Multi Drive Defs             */
+#define MSD1 0
+#define MSD2 1 
+#define MSD3 2
+#define MSD4 3
+
+extern uint8_t setDrive(uint8_t drive);
+extern uint8_t getDrive(void);
 
 /* Command code for disk_ioctrl fucntion */
 
