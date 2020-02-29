@@ -44,10 +44,6 @@
 // needs msc from  https://github.com/wwatson4506/MSC	
 #ifndef USE_EXTERNAL_INIT
 	USBHost myusb;
-	USBHub hub1(myusb);
-	USBHub hub2(myusb);
-	USBHub hub3(myusb);
-	USBHub hub4(myusb);
 #endif
 	int MSC_disk_status() 
 	{	
