@@ -4,9 +4,6 @@
 // use following lines for early definitions of multiple partition configuration in uSDFS.h
 #define MY_VOL_TO_PART
 #include "uSDFS.h"
-//
-// for use of USB-HUBs
-#include <USBHost_t36.h>
 
 #if FF_MULTI_PARTITION		/* Multiple partition configuration */ 
 	PARTITION VolToPart[] = {{DEV_SPI, 0}, //{ physical drive number, Partition: 0:Auto detect, 1-4:Forced partition)} 
