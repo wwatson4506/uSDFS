@@ -42,7 +42,7 @@
 	#include "MassStorage.h"
 
 // needs msc from  https://github.com/wwatson4506/MSC	
-#ifndef USE_EXTENAL_INIT
+#ifndef USE_EXTERNAL_INIT
 	USBHost myusb;
 	USBHub hub1(myusb);
 	USBHub hub2(myusb);
@@ -63,7 +63,7 @@
 
 	int MSC_disk_initialize() 
 	{	
-#ifndef USE_EXTENAL_INIT
+#ifndef USE_EXTERNAL_INIT
 		myusb.begin();
 		return mscInit();
 #endif
