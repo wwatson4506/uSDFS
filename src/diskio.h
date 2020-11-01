@@ -28,6 +28,12 @@ typedef enum {
 	RES_WRITEERROR  /* 7: Write Error */
 } DRESULT;
 
+/*---------------------------------------*/
+/* Multi USB Drive Defs.                 */
+#define MSD1 0
+#define MSD2 1
+#define MSD3 2
+#define MSD4 3
 
 /*---------------------------------------*/
 /* Prototypes for disk control functions */
@@ -37,6 +43,8 @@ DSTATUS disk_initialize (BYTE pdrv);
 DSTATUS disk_status (BYTE pdrv);
 DRESULT disk_read (BYTE pdrv, BYTE* buff, DWORD sector, UINT count);
 DRESULT disk_write (BYTE pdrv, const BYTE* buff, DWORD sector, UINT count);
+DRESULT asyncdisk_read (BYTE pdrv, BYTE* buff, DWORD sector, UINT count);
+DRESULT asyncdisk_write (BYTE pdrv, const BYTE* buff, DWORD sector, UINT count);
 DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff);
 
 
@@ -46,15 +54,6 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff);
 #define STA_NODISK		0x02	/* No medium in the drive */
 #define STA_PROTECT		0x04	/* Write protected */
 
-/*----------------------------------------*/
-/*           Multi Drive Defs             */
-#define MSD1 0
-#define MSD2 1 
-#define MSD3 2
-#define MSD4 3
-
-extern uint8_t setDrive(uint8_t drive);
-extern uint8_t getDrive(void);
 
 /* Command code for disk_ioctrl fucntion */
 

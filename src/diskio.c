@@ -6,14 +6,12 @@
 /* This is an example of glue functions to attach various exsisting      */
 /* storage control modules to the FatFs module with a defined API.       */
 /*-----------------------------------------------------------------------*/
-
 #include "ff.h"			/* Obtains integer types */
 #include "diskio.h"		/* Declarations of disk functions */
 
 #include "utility/sd_spi.h"
 #include "utility/sd_sdhc.h"
 #include "utility/sd_msc.h"
-
 void logVar(char *s,unsigned int v);
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
@@ -32,12 +30,10 @@ DSTATUS disk_status (
 		return SDHC_disk_status();
 
 	case DEV_MSC :
-		setDrive(MSD1);
-		return MSC_disk_status();
+		return MSC_disk_status(MSD1);
 
 	case DEV_MSC1 :
-		setDrive(MSD2);
-		return MSC_disk_status();
+		return MSC_disk_status(MSD2);
 	}
 	return STA_NOINIT;
 }
@@ -45,7 +41,7 @@ DSTATUS disk_status (
 
 
 /*-----------------------------------------------------------------------*/
-/* Inidialize a Drive                                                    */
+/* Initialize a Drive                                                    */
 /*-----------------------------------------------------------------------*/
 
 DSTATUS disk_initialize (
@@ -73,20 +69,17 @@ DSTATUS disk_initialize (
 		return stat;
 
 	case DEV_MSC :
-		setDrive(MSD1);
-		result = MSC_disk_initialize();
+		result = MSC_disk_initialize(MSD1);
+
 		// translate the reslut code here
 		if(result==RES_OK) stat=0; else stat=STA_NODISK;
-
 		return stat;
 
 	case DEV_MSC1 :
-		setDrive(MSD2);
-		result = MSC_disk_initialize();
+		result = MSC_disk_initialize(MSD2);
 
-		// translate the result code here
+		// translate the reslut code here
 		if(result==RES_OK) stat=0; else stat=STA_NODISK;
-
 		return stat;
 	}
 	return STA_NOINIT;
@@ -127,8 +120,8 @@ DRESULT disk_read (
 
 	case DEV_MSC :
 		// translate the arguments here
-		setDrive(MSD1);
-		result = MSC_disk_read(buff, sector, count);
+
+		result = MSC_disk_read(MSD1, buff, sector, count);
 		// translate the reslut code here
 		if(result==0) res=RES_OK; else res=RES_READERROR;
 
@@ -136,8 +129,8 @@ DRESULT disk_read (
 
 	case DEV_MSC1 :
 		// translate the arguments here
-		setDrive(MSD2);
-		result = MSC_disk_read(buff, sector, count);
+
+		result = MSC_disk_read(MSD2, buff, sector, count);
 		// translate the reslut code here
 		if(result==0) res=RES_OK; else res=RES_READERROR;
 
@@ -186,8 +179,8 @@ DRESULT disk_write (
 
 	case DEV_MSC :
 		// translate the arguments here
-		setDrive(MSD1);
-		result = MSC_disk_write(buff, sector, count);
+
+		result = MSC_disk_write(MSD1, buff, sector, count);
 		// translate the reslut code here
 		if(result==0) res=RES_OK; else res=RES_WRITEERROR;
 
@@ -195,8 +188,8 @@ DRESULT disk_write (
 
 	case DEV_MSC1 :
 		// translate the arguments here
-		setDrive(MSD2);
-		result = MSC_disk_write(buff, sector, count);
+
+		result = MSC_disk_write(MSD2, buff, sector, count);
 		// translate the reslut code here
 		if(result==0) res=RES_OK; else res=RES_WRITEERROR;
 
@@ -208,6 +201,119 @@ DRESULT disk_write (
 
 #endif
 
+/*-----------------------------------------------------------------------*/
+/* Read Sector(s)  (ASYNC)                                                      */
+/*-----------------------------------------------------------------------*/
+
+DRESULT asyncdisk_read (
+	BYTE pdrv,		/* Physical drive nmuber to identify the drive */
+	BYTE *buff,		/* Data buffer to store read data */
+	DWORD sector,	/* Start sector in LBA */
+	UINT count		/* Number of sectors to read */
+)
+{
+	DRESULT res=RES_OK;
+	int result=0;
+	switch (pdrv) {
+	case DEV_SPI :
+  
+		result = SPI_disk_read(buff, sector, count);
+		// translate the reslut code here
+ 	    if(result==0) res=RES_OK; else res=RES_READERROR;
+
+		return res;
+
+	case DEV_SDHC :
+		// translate the arguments here
+
+		result = SDHC_disk_read(buff, sector, count);
+		// translate the reslut code here
+		if(result==0) res=RES_OK; else res=RES_READERROR;
+
+		return res;
+
+	case DEV_MSC :
+		// translate the arguments here
+
+		result = asyncMSC_disk_read(MSD1, buff, sector, count);
+		// translate the reslut code here
+		if(result==0) res=RES_OK; else res=RES_READERROR;
+
+		return res;
+
+	case DEV_MSC1 :
+		// translate the arguments here
+
+		result = asyncMSC_disk_read(MSD2, buff, sector, count);
+		// translate the reslut code here
+		if(result==0) res=RES_OK; else res=RES_READERROR;
+
+		return res;
+	}
+
+	return RES_PARERR;
+}
+
+
+
+/*-----------------------------------------------------------------------*/
+/* Write Sector(s)  (ASYNC)                                                     */
+/*-----------------------------------------------------------------------*/
+
+#if FF_FS_READONLY == 0
+
+DRESULT asyncdisk_write (
+	BYTE pdrv,			/* Physical drive nmuber to identify the drive */
+	const BYTE *buff,	/* Data to be written */
+	DWORD sector,		/* Start sector in LBA */
+	UINT count			/* Number of sectors to write */
+)
+{
+	DRESULT res=RES_OK;
+	int result;
+
+	switch (pdrv) {
+	case DEV_SPI :
+		// translate the arguments here
+
+		result = SPI_disk_write(buff, sector, count);
+		// translate the reslut code here
+		if(result==0) res=RES_OK; else res=RES_WRITEERROR;
+
+		return res;
+
+	case DEV_SDHC :
+		// translate the arguments here
+
+		result = SDHC_disk_write(buff, sector, count);
+		// translate the reslut code here
+		if(result==0) res=RES_OK; else res=RES_WRITEERROR;
+
+		return res;
+
+	case DEV_MSC :
+		// translate the arguments here
+
+		result = asyncMSC_disk_write(MSD1, buff, sector, count);
+		// translate the reslut code here
+		if(result==0) res=RES_OK; else res=RES_WRITEERROR;
+
+		return res;
+
+	case DEV_MSC1 :
+		// translate the arguments here
+
+		result = asyncMSC_disk_write(MSD2, buff, sector, count);
+		// translate the reslut code here
+		if(result==0) res=RES_OK; else res=RES_WRITEERROR;
+
+		return res;
+	}
+
+	return RES_PARERR;
+}
+
+#endif
 
 /*-----------------------------------------------------------------------*/
 /* Miscellaneous Functions                                               */
@@ -237,13 +343,16 @@ DRESULT disk_ioctl (
 //		return res;
 
 	case DEV_MSC :
-		setDrive(MSD1);
-		return SDHC_disk_ioctl(cmd,buff);
+		return MSC_ioctl(MSD1, cmd,buff);
+
+		// Process of the command for the SDHC device
+
 //		return res;
 
 	case DEV_MSC1 :
-		setDrive(MSD1);
-		return SDHC_disk_ioctl(cmd,buff);
+		return MSC_ioctl(MSD2, cmd,buff);
+
+		// Process of the command for the SDHC device
 
 //		return res;
 

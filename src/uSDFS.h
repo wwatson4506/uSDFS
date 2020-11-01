@@ -5,26 +5,24 @@
 #include "ff.h"
 #include "utility/sd_config.h"
 
-#ifndef MY_VOL_TO_PART
-	#define MY_VOL_TO_PART
-	#if FF_MULTI_PARTITION		/* Multiple partition configuration */ 
-		PARTITION VolToPart[] = {{DEV_SPI, 0}, //{ physical drive number, Partition: 0:Auto detect, 1-4:Forced partition)} 
-								 {DEV_SDHC,0}, 
-								 {DEV_USB, 0}, 
-								 {DEV_USB, 1}, 
-								 {DEV_USB, 2}
-								 }; /* Volume - Partition resolution table */
-	#endif
-#endif
+//#ifndef MY_VOL_TO_PART
+//	#define MY_VOL_TO_PART
+//	#if FF_MULTI_PARTITION		/* Multiple partition configuration */ 
+//		PARTITION VolToPart[] = {{DEV_SPI, 0}, //{ physical drive number, Partition: 0:Auto detect, 1-4:Forced partition)} 
+//								 {DEV_SDHC,0}, 
+//								 {DEV_USB, 0}, 
+//								 {DEV_USB, 1}, 
+//								 {DEV_USB, 2}
+//								 }; /* Volume - Partition resolution table */
+//	#endif
+//#endif
 
 
 extern const char *STAT_ERROR_STRING[] ;
 extern const char *FR_ERROR_STRING[] ;
 extern const char *fileSystem[] ;
 
-// Uncomment if not using time.h anywhere else.
-// "redefinition of 'struct tm'" error to be exact.
-/*
+
 #ifndef HAVETM
 #define HAVETM
 	typedef struct tm
@@ -39,5 +37,4 @@ extern const char *fileSystem[] ;
 	  int tm_isdst;
 	} tm_t;
 #endif
-*/
 #endif
