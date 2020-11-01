@@ -40,41 +40,102 @@
 	#include "usb_serial.h"
 	#include "msc.h"
 	#include "MassStorage.h"
-
 // needs msc from  https://github.com/wwatson4506/MSC	
 #ifndef USE_EXTERNAL_INIT
 	USBHost myusb;
+	USBHub hub1(myusb);
+	USBHub hub2(myusb);
+	USBHub hub3(myusb);
+	USBHub hub4(myusb);
+	msHost mscHost;
+	msController msDrive1(myusb);
+	msController msDrive2(myusb);
 #endif
-	int MSC_disk_status() 
+
+
+	int MSC_disk_status(BYTE pDrv) 
 	{	
 		int stat = 0;
-
-		if(!checkDeviceConnected(getDrive())) stat = STA_NODISK; 	// No USB Mass Storage Device Connected
-		// Note: if connected and is not initialized it will be auto initialized.
-
-//		if(!deviceAvailable(getDrive())) stat = STA_NODISK; 	// No USB Mass Storage Device Connected
-//		if(!deviceInitialized(getDrive())) stat = STA_NOINIT; // USB Mass Storage Device Un-Initialized
+		switch(pDrv) {
+			case MSD1:
+				if(msDrive1.checkConnectedInitialized() != MS_CBW_PASS)
+					stat = STA_NODISK;
+				break;
+			case MSD2:
+				if(msDrive2.checkConnectedInitialized() != MS_CBW_PASS)
+					stat = STA_NODISK;
+				break;
+			default:
+				stat = STA_NODISK;
+		}
+//		if(!deviceAvailable()) stat = STA_NODISK; 	// No USB Mass Storage Device Connected
+//		if(!deviceInitialized()) stat = STA_NOINIT; // USB Mass Storage Device Un-Initialized
 		return stat;
 	}
 
-	int MSC_disk_initialize() 
+	int MSC_disk_initialize(BYTE pDrv) 
 	{	
+		int stat = 0;
+
 #ifndef USE_EXTERNAL_INIT
 		myusb.begin();
-		return mscInit();
+		mscHost.mscHostInit();
 #endif
-		return 0;
+		switch(pDrv) {
+			case MSD1:
+				if(msDrive1.mscInit() != MS_CBW_PASS)
+					stat = STA_NOINIT;
+				break;
+			case MSD2:
+				if(msDrive2.mscInit() != MS_CBW_PASS)
+					stat = STA_NOINIT;
+				break;
+			default:
+				stat = STA_NOINIT;
+		}
+		return stat;
 	}
 
-	int MSC_disk_read(BYTE *buff, DWORD sector, UINT count) 
-	{	return readSectors((BYTE *)buff, sector, count);
+	int MSC_disk_read(BYTE pDrv, BYTE *buff, DWORD sector, UINT count) 
+	{
+		switch(pDrv) {
+			case MSD1:
+				return mscHost.readSectors(&msDrive1, (BYTE *)buff, sector, count);
+			case MSD2:
+				return mscHost.readSectors(&msDrive2, (BYTE *)buff, sector, count);
+		}
 	}
 
-	int MSC_disk_write(const BYTE *buff, DWORD sector, UINT count) 
-	{	return writeSectors((BYTE *)buff, sector, count);
+	int MSC_disk_write(BYTE pDrv, const BYTE *buff, DWORD sector, UINT count) 
+	{
+		switch(pDrv) {
+			case MSD1:
+				return mscHost.writeSectors(&msDrive1, (BYTE *)buff, sector, count);
+			case MSD2:
+				return mscHost.writeSectors(&msDrive2, (BYTE *)buff, sector, count);
+		}
 	}
 
-	int MSC_ioctl(BYTE cmd, BYTE *buff) {return 0;}
+	int asyncMSC_disk_read(BYTE pDrv, BYTE *buff, DWORD sector, UINT count) 
+	{
+		switch(pDrv) {
+			case MSD1:
+				return mscHost.asyncReadSectors(&msDrive1, (BYTE *)buff, sector, count);
+			case MSD2:
+				return mscHost.asyncReadSectors(&msDrive2, (BYTE *)buff, sector, count);
+		}
+	}
+
+	int asyncMSC_disk_write(BYTE pDrv, const BYTE *buff, DWORD sector, UINT count) 
+	{
+		switch(pDrv) {
+			case MSD1:
+				return mscHost.asyncWriteSectors(&msDrive1, (BYTE *)buff, sector, count);
+			case MSD2:
+				return mscHost.asyncWriteSectors(&msDrive2, (BYTE *)buff, sector, count);
+		}
+	}
+	int MSC_ioctl(BYTE pDrv, BYTE cmd, BYTE *buff) {return 0;}
 #else
 	int MSC_disk_status() {return STA_NOINIT;}
 	int MSC_disk_initialize() {return STA_NOINIT;}

@@ -31,11 +31,13 @@ extern "C"
 {
 #endif
 
-int MSC_disk_status();
-int MSC_disk_initialize();
-int MSC_disk_read(BYTE *buff, DWORD sector, UINT count);
-int MSC_disk_write(const BYTE *buff, DWORD sector, UINT count);
-int MSC_ioctl(BYTE cmd, BYTE *buff);
+int MSC_disk_status(BYTE pDrv);
+int MSC_disk_initialize(BYTE pDrv);
+int MSC_disk_read(BYTE pDrv, BYTE *buff, DWORD sector, UINT count);
+int MSC_disk_write(BYTE pDrv, const BYTE *buff, DWORD sector, UINT count);
+int asyncMSC_disk_read(BYTE pDrv, BYTE *buff, DWORD sector, UINT count);
+int asyncMSC_disk_write(BYTE pDrv, const BYTE *buff, DWORD sector, UINT count);
+int MSC_ioctl(BYTE pDrv, BYTE cmd, BYTE *buff);
 
 #ifdef __cplusplus
 }
